@@ -7,8 +7,8 @@ import MessageInput from '../components/MessageInput';
 
 import cookie from 'cookiejs';
 import { useNavigate } from 'react-router-dom';
-import {useSocket} from "../hooks/useSocket.ts";
-import {useChatSocket} from "../hooks/useChatSocket.ts";
+import { useSocket } from "../hooks/useSocket.ts";
+import { useChatSocket } from "../hooks/useChatSocket.ts";
 
 
 export default function Chat() {
@@ -17,14 +17,14 @@ export default function Chat() {
   const [loading, setLoading] = useState(true);
 
   const socketRef = useSocket();
-  const {users, messages, sendMessage} = useChatSocket({
+  const { users, messages, sendMessage } = useChatSocket({
     socket: socketRef,
-    userName: cookie.get('chat-user-example').toString()|| null,
+    userName: cookie.get('chat-user-example').toString() || null,
   });
 
   const cookieValue = cookie.get('chat-user-example');
-  const userName = cookieValue ? 
-    (typeof cookieValue === 'string' ? cookieValue.replace(/"/g, '') : String(cookieValue)) 
+  const userName = cookieValue ?
+    (typeof cookieValue === 'string' ? cookieValue.replace(/"/g, '') : String(cookieValue))
     : null;
 
   // Redirect to login if no username
@@ -40,19 +40,19 @@ export default function Chat() {
 
   useEffect(() => {
     if (socketRef.current) {
-     socketRef.current.emit('get-users');
+      socketRef.current.emit('get-users');
 
     }
   }, []);
   // Show loading state
   if (loading) {
     return (
-      <Box 
-        sx={{ 
-          display: 'flex', 
-          justifyContent: 'center', 
-          alignItems: 'center', 
-          height: '100vh' 
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100vh'
         }}
       >
         <CircularProgress />
@@ -67,7 +67,7 @@ export default function Chat() {
 
       <Grid container sx={{ height: '100vh' }}>
         {/* User list sidebar */}
-        <Grid size={2} sx={{ borderRight: 1, borderColor: 'divider' }}>
+        <Grid item xs={2}>
           <UserList
             users={users}
             selectedUserId={selectedUserId}
@@ -76,7 +76,7 @@ export default function Chat() {
         </Grid>
 
         {/* Chat area */}
-        <Grid size={10}>
+        <Grid xs={10}>
           <Box
             sx={{
               height: '100%',
