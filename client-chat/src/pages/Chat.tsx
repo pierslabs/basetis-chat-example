@@ -7,9 +7,8 @@ import MessageInput from '../components/MessageInput';
 
 import cookie from 'cookiejs';
 import { useNavigate } from 'react-router-dom';
-import { useSocket } from "../hooks/useSocket.ts";
-import { useChatSocket } from "../hooks/useChatSocket.ts";
-
+import { useSocket } from '../hooks/useSocket.ts';
+import { useChatSocket } from '../hooks/useChatSocket.ts';
 
 export default function Chat() {
   const navigate = useNavigate();
@@ -23,8 +22,10 @@ export default function Chat() {
   });
 
   const cookieValue = cookie.get('chat-user-example');
-  const userName = cookieValue ?
-    (typeof cookieValue === 'string' ? cookieValue.replace(/"/g, '') : String(cookieValue))
+  const userName = cookieValue
+    ? typeof cookieValue === 'string'
+      ? cookieValue.replace(/"/g, '')
+      : String(cookieValue)
     : null;
 
   // Redirect to login if no username
@@ -41,9 +42,15 @@ export default function Chat() {
   useEffect(() => {
     if (socketRef.current) {
       socketRef.current.emit('get-users');
-
     }
   }, []);
+
+  // Reset selectedUserId if the selected user is no longer in the users list (disconnected)
+  useEffect(() => {
+    if (selectedUserId && !users.some(user => user.id === selectedUserId)) {
+      setSelectedUserId(null);
+    }
+  }, [users, selectedUserId]);
   // Show loading state
   if (loading) {
     return (
@@ -52,7 +59,7 @@ export default function Chat() {
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          height: '100vh'
+          height: '100vh',
         }}
       >
         <CircularProgress />
@@ -60,6 +67,7 @@ export default function Chat() {
     );
   }
 
+  //user disconnect clear his mes
 
   return (
     <>
@@ -82,12 +90,12 @@ export default function Chat() {
               height: '100%',
               display: 'flex',
               flexDirection: 'column',
-              width: '100%'
+              width: '100%',
             }}
           >
             {selectedUserId === null ? (
-              <Box m="auto">
-                <Typography variant="h6" color="text.secondary">
+              <Box m='auto'>
+                <Typography variant='h6' color='text.secondary'>
                   Selecciona un usuario para chatear
                 </Typography>
               </Box>

@@ -73,7 +73,30 @@ export const useChatSocket = ({ socket, userName }: UseChatSocketProps): UseChat
       if (currentUser) {
         // Filter out the current user from the list
         const otherUsers = userList.filter(u => u.name !== userName);
-        setUsers(otherUsers);
+
+        // Check for disconnected users by comparing with previous user list
+        setUsers(prevUsers => {
+          // Find users that were in the previous list but not in the new list (disconnected users)
+          const disconnectedUsers = prevUsers.filter(
+            prevUser => !otherUsers.some(newUser => newUser.id === prevUser.id)
+          );
+
+          // Clear messages for disconnected users
+          if (disconnectedUsers.length > 0) {
+            setMessages(prevMessages => {
+              const newMessages = { ...prevMessages };
+
+              // Remove messages for each disconnected user
+              disconnectedUsers.forEach(user => {
+                delete newMessages[user.id];
+              });
+
+              return newMessages;
+            });
+          }
+
+          return otherUsers;
+        });
       }
     };
 
